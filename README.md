@@ -1,1 +1,1 @@
-# projeto14-bitstore-back
+# projeto14-bitstore-back-end
