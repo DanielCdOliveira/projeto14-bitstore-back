@@ -1,17 +1,26 @@
+import { ObjectId } from "bson";
 import db from "../db/db.js";
 
-const array = [
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-  { name: "rtx 3080", description: "placa de video", price: 9999.99 },
-];
+export async function getProducts(req, res) {
+  try {
+    let products = await db.collection("products").find().toArray();
+    console.log(products);
+    res.send(products);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+}
 
-export default async function getProducts(req, res) {
-  res.send(array);
+export async function getProduct(req, res) {
+  const id = req.params.id;
+  console.log(id);
+  try {
+    let product = await db
+      .collection("products")
+      .findOne({ _id: new ObjectId(id)});
+    console.log(product);
+    res.send(product);
+  } catch (error) {
+    res.sendStatus(500);
+  }
 }
