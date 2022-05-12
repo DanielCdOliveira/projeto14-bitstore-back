@@ -7,13 +7,14 @@ import dotenv from "dotenv";
 
 import db from "./db/db.js";
 import authRouter from "./routes/authRouter.js";
-
+import productsRouter from "./routes/productsRouter.js"
 const app = express();
 app.use(cors());
 app.use(json());
 dotenv.config();
  
 app.use(authRouter);
+app.use(productsRouter)
 
 app.get('/signin', async (req, res) => {
     console.log("req.headers =");
