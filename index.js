@@ -7,7 +7,9 @@ import dotenv from "dotenv";
 
 import db from "./db/db.js";
 import authRouter from "./routes/authRouter.js";
-import productsRouter from "./routes/productsRouter.js";
+import productsRouter from "./routes/productsRouter.js"
+import cartRouter from "./routes/cartRouter.js";
+
 const app = express();
 app.use(cors());
 app.use(json());
@@ -15,6 +17,7 @@ dotenv.config();
  
 app.use(authRouter);
 app.use(productsRouter)
+
 
 app.get('/signin', async (req, res) => {
     console.log("req.headers =");
@@ -72,6 +75,12 @@ catch(err){
     console.log(err);
     return res.status(500).send("Erro ao criar endereço");
 }});
+
+app.use(cartRouter)
+
+app.post("/admin"), async (req, res) => {
+
+}
 
 //get address from database
 app.get("/address", async (req, res) => {
