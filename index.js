@@ -17,7 +17,7 @@ dotenv.config();
  
 app.use(authRouter);
 app.use(productsRouter)
-
+app.use(cartRouter)
 app.use(addressRouter);
 
 app.get('/signin', async (req, res) => {
@@ -77,17 +77,13 @@ app.get('/signin', async (req, res) => {
 //     return res.status(500).send("Erro ao criar endereço");
 // }});
 
-app.use(cartRouter)
 
-app.post("/admin"), async (req, res) => {
-
-}
 
 //get address from database
-app.get("/address", async (req, res) => {
-    const token  = req.headers.authorization;
-    console.log("token enviado pelo front =");
-    console.log(token)
+// app.get("/address", async (req, res) => {
+//     const token  = req.headers.authorization;
+//     console.log("token enviado pelo front =");
+//     console.log(token)
     
 //     try {
 //         const user = await db.collection('tokens').findOne({ token:token });
@@ -115,4 +111,4 @@ app.get("/address", async (req, res) => {
 //servidor
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, console.log(`Servidor iniciado na porta ${PORT}`));
+app.listen(PORT, console.log(`Servidor iniciado na porta ${PORT}`))
