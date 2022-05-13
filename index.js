@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 
 import db from "./db/db.js";
 import authRouter from "./routes/authRouter.js";
-import productsRouter from "./routes/productsRouter.js"
+import productsRouter from "./routes/productsRouter.js";
 const app = express();
 app.use(cors());
 app.use(json());
@@ -59,7 +59,7 @@ try{
             bairro,
             cidade,
             estado,
-            cpf: userCadastro.cpf
+            userId: userCadastro._id
         });
         return res.status(200).send(address);   
     }
@@ -83,14 +83,8 @@ app.get("/address", async (req, res) => {
         const user = await db.collection('tokens').findOne({ token:token });
         console.log("procurando o usuario do token")
         console.log(user.userId);
-        const userCadastro = await db.collection("users").findOne({_id: user.userId});
-        console.log("user cadastro =");
-        console.log(userCadastro.name);
-        const userAddress = await db.collection('addresses').findOne({ cpf: userCadastro.cpf });
-        console.log("user address =");
-        console.log(userAddress);
         if(user){
-            const address = await db.collection('addresses').findOne({cpf: userAddress.cpf});
+            const address = await db.collection('addresses').findOne({userId: user.userId});
             console.log("address =");
             console.log(address);
             return res.status(200).send(address);
@@ -109,5 +103,5 @@ app.get("/address", async (req, res) => {
 
 
 //servidor
-// const PORT = process.env.PORT || 5000;
-app.listen(5001, console.log(`Servidor iniciado na porta 5000`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, console.log(`Servidor iniciado na porta ${PORT}`));
