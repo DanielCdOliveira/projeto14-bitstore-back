@@ -24,11 +24,11 @@ app.get('/signin', async (req, res) => {
     try {
         //pegar o user id do token
         const user = await db.collection('tokens').findOne({token});
-        const userId = await db.collection("users").findOne({_id: user.userId});
+        const userCadastro = await db.collection("users").findOne({_id: user.userId});
 
         console.log("user =");
         console.log(user);
-        return res.status(200).send(userId); //retorno 
+        return res.status(200).send(userCadastro); //retorno 
     } 
     catch (error) {
         console.log(error);
@@ -38,7 +38,9 @@ app.get('/signin', async (req, res) => {
 
 app.post('/address', async (req, res) => {
     const {cep, endereco, numero, complemento, bairro, cidade, estado} = req.body;
-    const { token } = req.headers.authorization;
+    const token = req.headers.authorization;
+    console.log("encontrou token do post address?");
+    console.log(token); 
 //validacao
     // const {error} = addressSchema.validate(req.body, {abortEarly: false});
     // if (error) {
@@ -46,8 +48,9 @@ app.post('/address', async (req, res) => {
     // }
 try{
     //insert address in database
-    const user = await db.collection('users').findOne({ token });
-    if(user){
+    const user = await db.collection('tokens').findOne({ token });
+    const userCadastro = await db.collection("users").findOne({_id: user.userId});
+    if(userCadastro){
         const address = await db.collection('addresses').insertOne({
             cep,
             endereco,
@@ -56,7 +59,7 @@ try{
             bairro,
             cidade,
             estado,
-            cpf: user.cpf
+            cpf: userCadastro.cpf
         });
         return res.status(200).send(address);   
     }
@@ -70,18 +73,26 @@ catch(err){
     return res.status(500).send("Erro ao criar endereço");
 }});
 
-
-app.post("/admin"), async (req, res) => {
-
-}
-
 //get address from database
 app.get("/address", async (req, res) => {
-    const { token } = req.headers.authorization;
+    const token  = req.headers.authorization;
+    console.log("token enviado pelo front =");
+    console.log(token)
+    
     try {
-        const user = await db.collection('users').findOne({ token });
+        const user = await db.collection('tokens').findOne({ token:token });
+        console.log("procurando o usuario do token")
+        console.log(user.userId);
+        const userCadastro = await db.collection("users").findOne({_id: user.userId});
+        console.log("user cadastro =");
+        console.log(userCadastro.name);
+        const userAddress = await db.collection('addresses').findOne({ cpf: userCadastro.cpf });
+        console.log("user address =");
+        console.log(userAddress);
         if(user){
-            const address = await db.collection('addresses').findOne({cpf: user.cpf});
+            const address = await db.collection('addresses').findOne({cpf: userAddress.cpf});
+            console.log("address =");
+            console.log(address);
             return res.status(200).send(address);
         }
         else{
@@ -98,5 +109,5 @@ app.get("/address", async (req, res) => {
 
 
 //servidor
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, console.log(`Servidor iniciado na porta ${PORT}`));
+// const PORT = process.env.PORT || 5000;
+app.listen(5001, console.log(`Servidor iniciado na porta 5000`));
