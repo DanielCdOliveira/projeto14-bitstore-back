@@ -3,11 +3,12 @@ import { Collection } from "mongodb";
 import db from "../db/db.js";
 
 export async function addToCart(req, res) {
-  console.log("entrou");
+
   const product = req.body;
   let plus = product.plus
   delete product.plus
-  console.log(product);
+  delete product.description
+  // console.log(product);
   const { authorization } = req.headers;
   const token = authorization?.replace("Bearer ", "");
   console.log(token);
