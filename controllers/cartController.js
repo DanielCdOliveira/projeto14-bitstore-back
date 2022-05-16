@@ -66,7 +66,11 @@ export async function getCart(req, res){
     let cartUser = await db
       .collection("carts")
       .findOne({ userId});
-    // if(!cartUser)
+      console.log("cartuser",cartUser);
+    if(!cartUser){
+      res.send([])
+      return
+    }
     console.log(cartUser.cart);
     res.send(cartUser.cart)
 }
