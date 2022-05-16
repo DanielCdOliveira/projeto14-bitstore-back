@@ -78,14 +78,16 @@ export async function delectProduct(req, res) {
       }else{
         return true
       }});
-      console.log(cartArray);
-      console.log(newArray);
+      console.log("antes",cartArray);
+      console.log("agora",newArray);
       await db
         .collection("carts")
         .updateOne({ userId }, { $set: { cart: newArray } });
     }
-    res.sendStatus(201);
-  } catch (error) {}
+    res.sendStatus(200)
+  } catch (error) {
+    res.sendStatus(500)
+  }
 }
 
 export async function getCart(req, res) {
