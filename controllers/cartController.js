@@ -1,11 +1,12 @@
 import db from "../db/db.js";
 
 export async function addToCart(req, res) {
-  console.log("entrou");
+
   const product = req.body;
   let plus = product.plus
   delete product.plus
-  console.log(product);
+  delete product.description
+  // console.log(product);
   const { authorization } = req.headers;
   const token = authorization?.replace("Bearer ", "");
   console.log(token);
@@ -63,7 +64,11 @@ export async function getCart(req, res){
     let cartUser = await db
       .collection("carts")
       .findOne({ userId});
-    // if(!cartUser)
+      console.log("cartuser",cartUser);
+    if(!cartUser){
+      res.send([])
+      return
+    }
     console.log(cartUser.cart);
     res.send(cartUser.cart)
 }
