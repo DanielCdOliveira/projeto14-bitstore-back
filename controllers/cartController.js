@@ -1,5 +1,3 @@
-import { ObjectId } from "bson";
-import { Collection } from "mongodb";
 import db from "../db/db.js";
 
 export async function addToCart(req, res) {
