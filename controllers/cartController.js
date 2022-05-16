@@ -33,12 +33,12 @@ export async function addToCart(req, res) {
             console.log("entrou no plus");
 
             element.qty++;
-          } else if (product.newQty) {
+          } else if (product.newQty >= 1) {
             console.log("entrou no newqty");
             console.log(product);
-            console.log( element.qty);
+            console.log(element.qty);
             element.qty = product.newQty;
-            console.log( element.qty);
+            console.log(element.qty);
           }
           doesExist = true;
           return;
@@ -48,7 +48,7 @@ export async function addToCart(req, res) {
         let data = { ...product, qty: 1 };
         cartArray.push(data);
       }
-      console.log("array",cartArray);
+      console.log("array", cartArray);
       await db
         .collection("carts")
         .updateOne({ userId }, { $set: { cart: cartArray } });
@@ -57,69 +57,48 @@ export async function addToCart(req, res) {
   } catch (error) {}
 }
 
-export async function editCart(req, res) {
-  const product = req.body;
-  let plus = product.plus;
-  delete product.plus;
-  delete product.description;
-  // console.log(product);
+export async function delectProduct(req, res) {
+
+  const id = req.body.id;
   const { authorization } = req.headers;
   const token = authorization?.replace("Bearer ", "");
   console.log(token);
   if (!token) return res.sendStatus(401);
-  // trocar para {userId}
   const { userId } = await db.collection("tokens").findOne({ token });
   if (!userId) return res.sendStatus(401);
   try {
     let cartUser = await db.collection("carts").findOne({ userId });
-    console.log(cartUser);
     if (!cartUser) {
-      console.log("entrou no !cartuser");
-      let data = { userId, cart: [{ ...product, qty: 1 }] };
-      db.collection("carts").insertOne(data);
-      console.log(data);
+      res.sendStatus(404)
     } else {
       let cartArray = cartUser.cart;
-      let doesExist = false;
-      cartArray.forEach((element) => {
-        if (element._id === product._id) {
-          if (plus) {
-            element.qty++;
-          }
-          doesExist = true;
-          return;
-        }
-      });
-      if (!doesExist) {
-        let data = { ...product, qty: 1 };
-        cartArray.push(data);
-      }
+      let newArray = cartArray.filter((element) => {
+        if (element._id === id) {
+          return false
+      }else{
+        return true
+      }});
       console.log(cartArray);
+      console.log(newArray);
       await db
         .collection("carts")
-        .updateOne({ userId }, { $set: { cart: cartArray } });
+        .updateOne({ userId }, { $set: { cart: newArray } });
     }
     res.sendStatus(201);
   } catch (error) {}
 }
 
 export async function getCart(req, res) {
-  console.log("entrou");
   const { authorization } = req.headers;
   const token = authorization?.replace("Bearer ", "");
-  console.log(token);
   if (!token) return res.sendStatus(401);
-  // trocar para {userId}
   const { userId } = await db.collection("tokens").findOne({ token });
   if (!userId) return res.sendStatus(401);
-  console.log(userId);
   let cartUser = await db.collection("carts").findOne({ userId });
-  console.log("cartuser", cartUser);
   if (!cartUser) {
     res.send([]);
     return;
   }
-  console.log(cartUser.cart);
   res.send(cartUser.cart);
 }
 
